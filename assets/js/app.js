@@ -41,12 +41,10 @@
     setMenu(!menu.classList.contains('open'));
   });
 
-  /* ================= 四季按钮（生长 → 凋零 → 回雪） ================= */
+  /* ================= 四季按钮 ================= */
 
   function initBloom() {
     var btn = document.getElementById('bloom');
-    var dot = document.getElementById('bloomDot');
-    var toast = document.getElementById('bloomToast');
     if (!btn) return;
 
     function apply(i, silent) {
@@ -57,7 +55,6 @@
       seasonIdx = i;
       if (canvas) buildParticles();
       try { localStorage.setItem('garden-season', String(i)); } catch (e) {}
-      dot.style.background = c.v;
       if (!silent) {
         toast.textContent = c.name + ' · ' + c.en;
         toast.classList.add('show');
@@ -93,14 +90,61 @@
     { title: '生活混剪', tag: '手感最熟', desc: '碎片混剪。想往电影感走，还在找形状。', pf: 'B 站', url: BSPACE }
   ];
 
-  /* 四季轮：冬（雪）→ 春（蒲公英）→ 夏（萤火）→ 秋（落叶）→ 回冬 */
-  /* v = 主题色（白底/深底都用），bright = 强版（深色菜单/特殊场景用） */
+  /* 四季轮：冬（雪/金）→ 春（芽/绿）→ 夏（萤/黄）→ 秋（叶/橙）→ 回冬 */
+  /* 黑底配色：v = 主色（用于金边、icon），bright = 强版（菜单 hover） */
   var SEASONS = [
-    { name: '冬', en: 'WINTER', v: '#1a1a1a', bright: '#f2efe6' },
+    { name: '冬', en: 'WINTER', v: '#c9a86a', bright: '#f0d99a' },
     { name: '春', en: 'SPRING', v: '#9cb069', bright: '#b8d18a' },
     { name: '夏', en: 'SUMMER', v: '#d8c66a', bright: '#f0d980' },
     { name: '秋', en: 'AUTUMN', v: '#c96f3b', bright: '#d9925e' }
   ];
+
+  /* 中式老木窗 SVG（每扇窗：厚框 + 粗窗棂 + 9 格糊纸 + 木纹） */
+  function shutterSvg() {
+    return '' +
+      '<svg class="shutter-art" viewBox="0 0 100 200" preserveAspectRatio="none">' +
+        '<defs>' +
+          '<pattern id="wood-l" patternUnits="userSpaceOnUse" width="240" height="40">' +
+            '<rect width="240" height="40" fill="#6a4a2a"/>' +
+            '<path d="M0 8 Q 40 10 80 7 T 160 9 T 240 8" stroke="#2a1408" stroke-width="0.7" fill="none" opacity="0.6"/>' +
+            '<path d="M0 18 Q 50 16 100 19 T 200 18 T 240 19" stroke="#2a1408" stroke-width="0.5" fill="none" opacity="0.45"/>' +
+            '<path d="M0 28 Q 30 30 60 27 T 130 29 T 200 28 T 240 28" stroke="#2a1408" stroke-width="0.5" fill="none" opacity="0.45"/>' +
+            '<path d="M0 36 Q 60 34 120 37 T 200 36 T 240 35" stroke="#2a1408" stroke-width="0.4" fill="none" opacity="0.35"/>' +
+            '<path d="M0 12 Q 100 11 200 13 T 240 12" stroke="#1a0a02" stroke-width="0.3" fill="none" opacity="0.3"/>' +
+          '</pattern>' +
+          '<pattern id="paper-l" patternUnits="userSpaceOnUse" width="20" height="20">' +
+            '<rect width="20" height="20" fill="#e8dcc0" opacity="0.5"/>' +
+            '<circle cx="4" cy="6" r="0.3" fill="#7a6a4a" opacity="0.4"/>' +
+            '<circle cx="14" cy="11" r="0.25" fill="#7a6a4a" opacity="0.35"/>' +
+            '<circle cx="8" cy="16" r="0.3" fill="#7a6a4a" opacity="0.4"/>' +
+            '<circle cx="17" cy="4" r="0.2" fill="#7a6a4a" opacity="0.3"/>' +
+          '</pattern>' +
+        '</defs>' +
+        /* 1. 9 个窗格的纸（底层先画，被窗棂覆盖） */
+        '<rect x="8" y="8" width="26" height="58" fill="url(#paper-l)" rx="0.5"/>' +
+        '<rect x="37" y="8" width="26" height="58" fill="url(#paper-l)" rx="0.5"/>' +
+        '<rect x="63" y="8" width="26" height="58" fill="url(#paper-l)" rx="0.5"/>' +
+        '<rect x="8" y="71" width="26" height="58" fill="url(#paper-l)" rx="0.5"/>' +
+        '<rect x="37" y="71" width="26" height="58" fill="url(#paper-l)" rx="0.5"/>' +
+        '<rect x="63" y="71" width="26" height="58" fill="url(#paper-l)" rx="0.5"/>' +
+        '<rect x="8" y="134" width="26" height="58" fill="url(#paper-l)" rx="0.5"/>' +
+        '<rect x="37" y="134" width="26" height="58" fill="url(#paper-l)" rx="0.5"/>' +
+        '<rect x="63" y="134" width="26" height="58" fill="url(#paper-l)" rx="0.5"/>' +
+        /* 2. 厚木外框（不规则边缘） */
+        '<path d="M 2 0.5 L 98 0.5 L 99.5 1.5 L 99 6 L 99.5 194 L 98 199.5 L 2 199.5 L 0.5 194 L 1 6 L 2 1.5 Z" fill="url(#wood-l)" stroke="#1a0a02" stroke-width="0.3"/>' +
+        /* 3. 粗窗棂（不规则 path，模拟手工） */
+        '<path d="M 35 0.5 Q 34 50 35.5 100 Q 35 150 35 199.5" stroke="#1a0a02" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+        '<path d="M 61 0.5 Q 60.5 50 61.5 100 Q 61 150 61 199.5" stroke="#1a0a02" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+        '<path d="M 0.5 66 Q 50 65.5 99.5 66.5" stroke="#1a0a02" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+        '<path d="M 0.5 129 Q 50 130 99.5 129" stroke="#1a0a02" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+        /* 4. 窗棂上的高光（细线，立体感） */
+        '<path d="M 35.4 5 L 35.6 195" stroke="rgba(255,230,200,0.18)" stroke-width="0.6" fill="none"/>' +
+        '<path d="M 61.4 5 L 61.6 195" stroke="rgba(255,230,200,0.18)" stroke-width="0.6" fill="none"/>' +
+        /* 5. 外框高光（模拟光从左上来） */
+        '<path d="M 4 2 L 96 2" stroke="rgba(255,230,200,0.22)" stroke-width="0.6" fill="none"/>' +
+        '<path d="M 2 4 L 2 196" stroke="rgba(255,230,200,0.18)" stroke-width="0.5" fill="none"/>' +
+      '</svg>';
+  }
 
   function homePage() {
     return '' +
@@ -108,8 +152,8 @@
       '<div class="book">' +
         '<div class="book-sticky">' +
           '<div class="cover" id="cover">' +
-            '<div class="shutter s-l"></div>' +
-            '<div class="shutter s-r"></div>' +
+            '<div class="shutter s-l">' + shutterSvg() + '</div>' +
+            '<div class="shutter s-r">' + shutterSvg() + '</div>' +
             '<div class="cover-inner">' +
               '<p class="cover-kicker">S I N G C H</p>' +
               '<h1 class="cover-title">山 房</h1>' +
@@ -118,7 +162,7 @@
           '<section class="scene" id="scene-hero">' +
             '<div class="hero-core" id="hero-core">' +
               '<p class="hero-kicker">卷 首</p>' +
-              '<h1 class="hero-line">推窗<span class="accent">见山</span></h1>' +
+              '<h1 class="hero-line">推<span class="accent">窗</span>见山</h1>' +
               '<svg class="mtn" viewBox="0 0 260 100" aria-hidden="true">' +
                 '<path d="M18 88 L86 34 L112 58 L142 20 L204 88"/>' +
                 '<path d="M138 88 L188 44 L214 66 L248 88" opacity="0.45"/>' +
@@ -129,29 +173,25 @@
         '</div>' +
       '</div>' +
       '<section class="scene scene-left">' +
-        '<span class="pg-no">壹</span>' +
         '<div class="stat rise"><span class="num" data-count="11">0</span><em>年的记录</em></div>' +
-        '<div class="stat rise"><span class="num" data-count="3113">0</span><em>条笔记</em></div>' +
-        '<div class="stat rise"><span class="num" data-count="1600000">0</span><em>字</em></div>' +
-        '<p class="scene-note rise">相当于<span class="hl">十六本书</span>。<br>现在，它们有了安放的地方。</p>' +
+        '<div class="stat rise"><span class="num" data-count="3116">0</span><em>条笔记</em></div>' +
+        '<div class="stat rise"><span class="num" data-count="1606632">0</span><em>字</em></div>' +
+        '<p class="scene-note rise">相当于十六本书。<br>现在，它们有了安放的地方。</p>' +
       '</section>' +
       '<section class="scene">' +
-        '<span class="pg-no">贰</span>' +
-        '<h2 class="creed rise"><span class="hl">你好</span>，<br>欢迎来到我的山房。</h2>' +
-        '<p class="scene-note rise">这里收着我的<span class="hl">十一年</span>——三千条笔记、一些照片、一些影像。<br>我正把它们一件一件搬进来，你随便逛。</p>' +
+        '<h2 class="creed rise">你好，<br>欢迎来到我的<span class="hl">山房</span>。</h2>' +
+        '<p class="scene-note rise">这里收着我的十一年——三千条笔记、一些照片、一些影像。<br>我正把它们一件一件搬进来，你随便逛。</p>' +
       '</section>' +
       '<section class="scene scene-compact">' +
-        '<span class="pg-no">叁</span>' +
         '<p class="scene-note rise" style="margin-top:0;margin-bottom:30px;">进 去 逛 逛</p>' +
         '<div class="enter rise">' +
-          '<a href="#/posts"><span class="zh">文字<small>NOTES</small></span></a>' +
-          '<a href="#/videos"><span class="zh">影像<small>FILMS</small></span></a>' +
-          '<a href="#/gallery"><span class="zh">画廊<small>PHOTOS</small></span></a>' +
+          '<a href="#/posts"><span class="zh">文<small>NOTES</small></span></a>' +
+          '<a href="#/videos"><span class="zh">影<small>FILMS</small></span></a>' +
+          '<a href="#/gallery"><span class="zh">画<small>PHOTOS</small></span></a>' +
         '</div>' +
       '</section>' +
       '<section class="scene scene-end">' +
-        '<span class="pg-no">肆</span>' +
-        '<p class="end-note rise">© 2026 SINGCH<br>本站由 AI 辅助搭建 · 内容均为本人</p>' +
+        '<p class="end-note">© 2026 SINGCH<br>本站由 AI 辅助搭建 · 内容均为本人</p>' +
       '</section>';
   }
 
@@ -163,7 +203,7 @@
         '<p>' + p.excerpt + '</p></a>';
     }).join('');
     return '<main class="page">' +
-      '<h2 class="page-title">文字</h2>' +
+      '<h2 class="page-title">文</h2>' +
       '<p class="page-sub">NOTES · 只挑选，不发布</p>' +
       (rows || '<p style="color:var(--dim)">第一株植物正在移植中。</p>') +
       '</main>';
@@ -199,7 +239,7 @@
         '</a>';
     }).join('');
     return '<main class="page">' +
-      '<h2 class="page-title">影像</h2>' +
+      '<h2 class="page-title">影</h2>' +
       '<p class="page-sub">FILMS · 点开去 B 站看</p>' +
       '<div class="v-grid">' + cards + '</div>' +
       '<p class="ph-note">封面是占位图——B 站自动抓的竖屏封面不好看，这站自己配封面（3:4 竖版），想配哪张配哪张，不受平台限制。</p>' +
@@ -211,7 +251,7 @@
     var frames = '';
     for (var i = 0; i < 8; i++) { frames += '<div class="ph-frame">待接入</div>'; }
     return '<main class="page">' +
-      '<h2 class="page-title">画廊</h2>' +
+      '<h2 class="page-title">画</h2>' +
       '<p class="page-sub">PHOTOS · 不是摄影师，只是看得见</p>' +
       '<div class="gallery-grid">' + frames + '</div>' +
       '<p class="ph-note">待接入：手机摄影。照片放进 site/assets/img/ 后替换占位即可。</p>' +
@@ -245,7 +285,7 @@
       '</main>';
   }
 
-  /* ================= 首页动效：星尘 / 视差 / 逐行浮现 ================= */
+  /* ================= 首页动效 ================= */
 
   var raf = null;
   var canvas = null;
@@ -260,8 +300,7 @@
 
   function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
 
-  /* 四季粒子：冬雪 / 春蒲公英种 / 夏萤火 / 秋叶 */
-
+  /* 四季粒子 */
   var SEASON_FX = {
     0: { shape: 'snow',     colors: ['#a9b7c4', '#c3ccd4'], n: 60, a: 0.55 },
     1: { shape: 'dandelion',colors: ['#b5c690', '#a8c082'], n: 42, a: 0.7  },
@@ -285,7 +324,7 @@
         r: r,
         vy: vy,
         vx: (Math.random() - 0.5) * 0.08,
-        sw: Math.random() * Math.PI * 2,   /* 摇摆相位 */
+        sw: Math.random() * Math.PI * 2,
         sp: 0.008 + Math.random() * 0.012,
         sa: (fx.shape === 'leaf' ? 10 : 5) + Math.random() * 6,
         tw: Math.random() * Math.PI * 2,
@@ -305,7 +344,6 @@
   function onMove(x, y) { mouse.x = x; mouse.y = y; }
   function onLeave() { mouse.x = -9999; mouse.y = -9999; }
 
-  /* 逐行浮现 + 开场淡出（滚动驱动，每帧计算） */
   function updateScenes() {
     var vh = window.innerHeight;
     for (var s = 0; s < scenes.length; s++) {
@@ -322,8 +360,8 @@
 
       if (sc.core) {
         var sy2 = window.scrollY || window.pageYOffset || 0;
-        var cp = clamp(sy2 / H, 0, 1);                 /* 封面翻开进度 */
-        var reveal = clamp((cp - 0.45) / 0.35, 0, 1);  /* 翻过半，卷首浮现 */
+        var cp = clamp(sy2 / H, 0, 1);
+        var reveal = clamp((cp - 0.45) / 0.35, 0, 1);
         sc.core.style.opacity = reveal;
         sc.core.style.transform = 'scale(' + (1 + (1 - reveal) * 0.04) + ')';
       }
@@ -334,7 +372,6 @@
     ctx.clearRect(0, 0, W, H);
     var sy = window.scrollY || window.pageYOffset;
 
-    /* 窗随滑推开 */
     if (coverEl) {
       var cp = clamp(sy / H, 0, 1);
       var ce = cp * cp * (3 - 2 * cp);
@@ -352,7 +389,6 @@
       p.x += p.vx;
       p.y += p.vy;
 
-      /* 手指/鼠标经过，被轻轻推开 */
       var dx = p.x - mouse.x;
       var dy = p.y - mouse.y;
       var d2 = dx * dx + dy * dy;
@@ -377,7 +413,6 @@
         ctx.rotate(p.rot + Math.sin(p.sw) * 0.4);
         ctx.globalAlpha = al;
         ctx.fillStyle = p.c;
-        /* 叶子形状：上下尖、中间宽（柳叶/梧桐叶一类） */
         ctx.beginPath();
         ctx.moveTo(0, -p.r * 1.4);
         ctx.quadraticCurveTo(p.r * 0.7, -p.r * 0.3, p.r * 0.55, p.r * 0.4);
@@ -385,7 +420,6 @@
         ctx.quadraticCurveTo(-p.r * 0.35, p.r * 1.1, -p.r * 0.55, p.r * 0.4);
         ctx.quadraticCurveTo(-p.r * 0.7, -p.r * 0.3, 0, -p.r * 1.4);
         ctx.fill();
-        /* 叶脉（淡淡的） */
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.28)';
         ctx.lineWidth = 0.5;
         ctx.beginPath();
@@ -394,7 +428,6 @@
         ctx.stroke();
         ctx.restore();
       } else if (fx.shape === 'dandelion') {
-        /* 蒲公英种：中心点 + 6 根辐射丝 + 慢旋转 */
         ctx.save();
         ctx.translate(px, py);
         ctx.rotate(p.rot);
@@ -411,7 +444,6 @@
           ctx.lineTo(cx * p.r * 1.6, sy * p.r * 1.6);
         }
         ctx.stroke();
-        /* 中心点 */
         ctx.beginPath();
         ctx.arc(0, 0, p.r * 0.45, 0, 6.2832);
         ctx.fill();
@@ -461,7 +493,6 @@
     H = canvas.height = window.innerHeight;
     buildParticles();
 
-    /* 缓存幕与行 */
     scenes = [];
     var els = document.querySelectorAll('.scene');
     for (var i = 0; i < els.length; i++) {
@@ -472,7 +503,6 @@
       });
     }
 
-    /* 数字计数：进入视口触发一次 */
     var nums = document.querySelectorAll('.num');
     if ('IntersectionObserver' in window) {
       var io = new IntersectionObserver(function (entries) {
@@ -487,7 +517,6 @@
 
     window.addEventListener('resize', onResize);
     window.addEventListener('mousemove', function (e) { onMove(e.clientX, e.clientY); });
-    /* 触屏不更新 mouse 位置：手指拖动时粒子不会被推开（避免"乱跳"） */
     window.addEventListener('touchend', onLeave);
     document.addEventListener('mouseleave', onLeave);
 
@@ -531,6 +560,7 @@
     if (tab === 'home') initHome();
   }
 
+  var toast = document.getElementById('bloomToast');
   initBloom();
   window.addEventListener('hashchange', function () {
     if (postsReady) router();

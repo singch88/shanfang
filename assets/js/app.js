@@ -51,7 +51,7 @@
       var c = SEASONS[i];
       document.documentElement.style.setProperty('--accent', c.v);
       document.documentElement.style.setProperty('--accent-bright', c.bright);
-      document.documentElement.style.setProperty('--snow', String(c.snow));
+      document.documentElement.setAttribute('data-snow', c.snow);
       btn.setAttribute('data-si', String(i));
       seasonIdx = i;
       if (canvas) buildParticles();
@@ -94,10 +94,10 @@
   /* 四季轮：冬（雪/银白）→ 春（芽/绿）→ 夏（萤/黄）→ 秋（叶/橙）→ 回冬 */
   /* 黑底配色：黑白灰基调，v = 主色（按钮/高亮），bright = 强版（菜单 hover） */
   var SEASONS = [
-    { name: '冬', en: 'WINTER', v: '#d8d8d8', bright: '#f5f5f5', snow: 0.85 },
-    { name: '春', en: 'SPRING', v: '#9cb069', bright: '#b8d18a', snow: 0.40 },
-    { name: '夏', en: 'SUMMER', v: '#d8c66a', bright: '#f0d980', snow: 0    },
-    { name: '秋', en: 'AUTUMN', v: '#c96f3b', bright: '#d9925e', snow: 0.15 }
+    { name: '冬', en: 'WINTER', v: '#d8d8d8', bright: '#f5f5f5', snow: 'winter' },
+    { name: '春', en: 'SPRING', v: '#9cb069', bright: '#b8d18a', snow: 'spring' },
+    { name: '夏', en: 'SUMMER', v: '#d8c66a', bright: '#f0d980', snow: 'summer' },
+    { name: '秋', en: 'AUTUMN', v: '#c96f3b', bright: '#d9925e', snow: 'autumn' }
   ];
 
   /* 窗：两张纯白扇面 + 中间一条渐变缝（颜色随四季主题色切换） */
@@ -108,8 +108,8 @@
       '<div class="book">' +
         '<div class="book-sticky">' +
           '<div class="cover" id="cover">' +
-            '<div class="shutter s-l"></div>' +
-            '<div class="shutter s-r"></div>' +
+            '<div class="shutter s-l"><div class="edge e-l"></div></div>' +
+            '<div class="shutter s-r"><div class="edge e-r"></div></div>' +
             '<div class="seam"></div>' +
             '<div class="cover-inner">' +
               '<p class="cover-kicker">S I N G C H</p>' +
@@ -123,11 +123,21 @@
               '<svg class="mtn" viewBox="0 0 260 100" aria-hidden="true">' +
                 '<path d="M18 88 L86 34 L112 58 L142 20 L204 88"/>' +
                 '<path d="M138 88 L188 44 L214 66 L248 88" opacity="0.45"/>' +
-                /* 雪线：三峰同一高度（y=48），大波浪底边，随四季融雪（--snow 控制显隐） */
-                '<g class="snow" fill="#d8d8d8" stroke="none" style="opacity: var(--snow, 0.85)">' +
-                  '<path d="M86 34 L68.4 48 Q74 54 79.6 48 Q85 54 90.6 48 Q96 52 101.2 48 Z"/>' +
-                  '<path d="M142 20 L119.9 48 Q127 55 133.6 48 Q141 54 147.6 48 Q155 55 161.6 48 L167.5 48 Z"/>' +
-                  '<path d="M188 44 L183.5 48 Q186.5 51 188.5 48 Q190.5 51 192.7 48 Z" opacity="0.75"/>' +
+                /* 雪线：只画左峰和中峰。不规则曲线（尖角 + 弧形混杂，每条都不一样），
+                   随季节换高度：冬最低(45) / 春升高(39) / 夏无 / 秋略低于春(41) */
+                '<g class="snowgrp" fill="#d8d8d8" stroke="none">' +
+                  '<g class="snow-w">' +
+                    '<path d="M86 34 L72.2 45 L76 48 L79 44 L84 48 Q88 51 91 46 L95 42 L97.9 45 Z"/>' +
+                    '<path d="M142 20 L122.3 45 L127 48 Q131 44 135 47 L139 43 L143 48 L148 44 Q152 47 156 45 L161 47 L164.8 45 Z"/>' +
+                  '</g>' +
+                  '<g class="snow-s">' +
+                    '<path d="M86 34 L79.7 39 L82 41 L85 38 Q87 41 89 38 L91.4 39 Z"/>' +
+                    '<path d="M142 20 L127 39 L131 41 L135 37 Q139 40 142 38 L146 41 L150 37 Q154 39 159.3 39 Z"/>' +
+                  '</g>' +
+                  '<g class="snow-a">' +
+                    '<path d="M86 34 L77.2 41 L80 43 L83 40 Q86 43 89 41 L93.6 41 Z"/>' +
+                    '<path d="M142 20 L125.4 41 L130 44 Q134 40 138 43 L142 39 L147 43 L151 39 Q156 42 161.1 41 Z"/>' +
+                  '</g>' +
                 '</g>' +
               '</svg>' +
               '<p class="hero-en">A HOUSE ON THE MOUNTAIN</p>' +
@@ -339,7 +349,6 @@
       var cp = clamp(sy / H, 0, 1);
       var ce = cp * cp * (3 - 2 * cp);
       coverEl.style.setProperty('--w', ce.toFixed(4));
-      coverEl.classList.toggle('gone', cp >= 0.995);
     }
 
     var fx = SEASON_FX[seasonIdx] || SEASON_FX[0];

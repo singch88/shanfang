@@ -99,76 +99,7 @@
     { name: '秋', en: 'AUTUMN', v: '#c96f3b', bright: '#d9925e' }
   ];
 
-  /* 中式老木窗 SVG：厚木外框 + 粗窗棂（木纹刻在木头上）+ 9 格糊纸（米白微透光）
-     uid 让左右两扇的木纹 pattern id 不一样（两根木头不会一模一样） */
-  function shutterSvg(uid) {
-    var W1 = 'wdA-' + uid, W2 = 'wdB-' + uid, PP = 'ppr-' + uid, PG = 'pgd-' + uid;
-    return '' +
-      '<svg class="shutter-art" viewBox="0 0 100 200" preserveAspectRatio="none">' +
-        '<defs>' +
-          /* 木纹 A（外框用）：横纹深褐 */
-          '<pattern id="' + W1 + '" patternUnits="userSpaceOnUse" width="200" height="34">' +
-            '<rect width="200" height="34" fill="#5d4023"/>' +
-            '<path d="M0 6 Q 45 8 90 5 T 180 7 T 200 6" stroke="#2c1608" stroke-width="0.8" fill="none" opacity="0.65"/>' +
-            '<path d="M0 15 Q 60 13 110 16 T 200 15" stroke="#2c1608" stroke-width="0.55" fill="none" opacity="0.5"/>' +
-            '<path d="M0 24 Q 35 26 70 23 T 140 25 T 200 24" stroke="#2c1608" stroke-width="0.55" fill="none" opacity="0.5"/>' +
-            '<path d="M0 31 Q 80 29 160 32 T 200 31" stroke="#1f0f05" stroke-width="0.4" fill="none" opacity="0.4"/>' +
-            '<path d="M0 10 Q 70 11 140 9 T 200 10" stroke="#7d5a34" stroke-width="0.5" fill="none" opacity="0.5"/>' +
-          '</pattern>' +
-          /* 木纹 B（窗棂用）：纹路走向不一样，和 A 不是同一根木头 */
-          '<pattern id="' + W2 + '" patternUnits="userSpaceOnUse" width="160" height="46">' +
-            '<rect width="160" height="46" fill="#6a4a28"/>' +
-            '<path d="M0 9 Q 40 7 85 10 T 160 9" stroke="#311806" stroke-width="0.7" fill="none" opacity="0.6"/>' +
-            '<path d="M0 21 Q 55 23 105 20 T 160 21" stroke="#311806" stroke-width="0.5" fill="none" opacity="0.5"/>' +
-            '<path d="M0 33 Q 30 31 65 34 T 130 32 T 160 33" stroke="#311806" stroke-width="0.5" fill="none" opacity="0.45"/>' +
-            '<path d="M0 42 Q 70 44 140 41 T 160 42" stroke="#241105" stroke-width="0.4" fill="none" opacity="0.4"/>' +
-            '<path d="M0 16 Q 60 15 120 17 T 160 16" stroke="#84603a" stroke-width="0.45" fill="none" opacity="0.5"/>' +
-          '</pattern>' +
-          /* 糊纸：不透明米白 + 纤维斑点（黑底上像夜里透光的纸） */
-          '<pattern id="' + PP + '" patternUnits="userSpaceOnUse" width="14" height="14">' +
-            '<rect width="14" height="14" fill="#e7dfc8"/>' +
-            '<circle cx="3.5" cy="5" r="0.32" fill="#b3a78a" opacity="0.5"/>' +
-            '<circle cx="10" cy="9.5" r="0.27" fill="#b3a78a" opacity="0.45"/>' +
-            '<circle cx="6" cy="12" r="0.3" fill="#b3a78a" opacity="0.4"/>' +
-          '</pattern>' +
-          /* 纸面的柔光（左上亮、右下暗，像窗外光打在纸上） */
-          '<linearGradient id="' + PG + '" x1="0" y1="0" x2="1" y2="1">' +
-            '<stop offset="0" stop-color="#fffbe8" stop-opacity="0.30"/>' +
-            '<stop offset="0.55" stop-color="#d9d0b6" stop-opacity="0.06"/>' +
-            '<stop offset="1" stop-color="#8f856c" stop-opacity="0.24"/>' +
-          '</linearGradient>' +
-        '</defs>' +
-        /* 1. 糊纸 9 格（先画，纸在木头后面） */
-        '<rect x="5" y="5" width="28" height="61.5" fill="url(#' + PP + ')"/>' +
-        '<rect x="37" y="5" width="26" height="61.5" fill="url(#' + PP + ')"/>' +
-        '<rect x="67" y="5" width="28" height="61.5" fill="url(#' + PP + ')"/>' +
-        '<rect x="5" y="70.5" width="28" height="59" fill="url(#' + PP + ')"/>' +
-        '<rect x="37" y="70.5" width="26" height="59" fill="url(#' + PP + ')"/>' +
-        '<rect x="67" y="70.5" width="28" height="59" fill="url(#' + PP + ')"/>' +
-        '<rect x="5" y="133.5" width="28" height="61.5" fill="url(#' + PP + ')"/>' +
-        '<rect x="37" y="133.5" width="26" height="61.5" fill="url(#' + PP + ')"/>' +
-        '<rect x="67" y="133.5" width="28" height="61.5" fill="url(#' + PP + ')"/>' +
-        /* 2. 纸面柔光（盖在纸上、木头之下） */
-        '<rect x="5" y="5" width="90" height="190" fill="url(#' + PG + ')"/>' +
-        /* 3. 粗窗棂（木头，木纹在这一根一根上；宽度故意不完全一样） */
-        '<rect x="32.8" y="4.6" width="4.3" height="190.8" fill="url(#' + W2 + ')" stroke="#170b03" stroke-width="0.45"/>' +
-        '<rect x="62.9" y="4.8" width="3.9" height="190.5" fill="url(#' + W2 + ')" stroke="#170b03" stroke-width="0.45"/>' +
-        '<rect x="4.7" y="66.4" width="90.6" height="4.2" fill="url(#' + W2 + ')" stroke="#170b03" stroke-width="0.45"/>' +
-        '<rect x="4.9" y="129.7" width="90.3" height="3.8" fill="url(#' + W2 + ')" stroke="#170b03" stroke-width="0.45"/>' +
-        /* 4. 厚外框（木头，四条边） */
-        '<rect x="0.4" y="0.5" width="99.2" height="4.6" fill="url(#' + W1 + ')" stroke="#170b03" stroke-width="0.45"/>' +
-        '<rect x="0.6" y="194.9" width="99" height="4.6" fill="url(#' + W1 + ')" stroke="#170b03" stroke-width="0.45"/>' +
-        '<rect x="0.5" y="0.5" width="4.5" height="199" fill="url(#' + W1 + ')" stroke="#170b03" stroke-width="0.45"/>' +
-        '<rect x="95" y="0.7" width="4.6" height="198.6" fill="url(#' + W1 + ')" stroke="#170b03" stroke-width="0.45"/>' +
-        /* 5. 立体高光：棂的受光边 + 外框受光边 */
-        '<path d="M 33.3 6 L 33.4 194" stroke="rgba(255,235,210,0.20)" stroke-width="0.6" fill="none"/>' +
-        '<path d="M 63.4 6 L 63.3 194" stroke="rgba(255,235,210,0.18)" stroke-width="0.6" fill="none"/>' +
-        '<path d="M 6 67 L 94 67" stroke="rgba(255,235,210,0.16)" stroke-width="0.6" fill="none"/>' +
-        '<path d="M 6 130.3 L 94 130.3" stroke="rgba(255,235,210,0.16)" stroke-width="0.6" fill="none"/>' +
-        '<path d="M 3 1.4 L 97 1.3" stroke="rgba(255,235,210,0.26)" stroke-width="0.7" fill="none"/>' +
-        '<path d="M 1.4 4 L 1.5 196" stroke="rgba(255,235,210,0.18)" stroke-width="0.55" fill="none"/>' +
-      '</svg>';
-  }
+  /* 窗：两张纯白扇面（CSS 渲染），开合轴心在外侧，从中间往两边推开 */
 
   function homePage() {
     return '' +
@@ -176,16 +107,16 @@
       '<div class="book">' +
         '<div class="book-sticky">' +
           '<div class="cover" id="cover">' +
-            '<div class="shutter s-l">' + shutterSvg('l') + '</div>' +
-            '<div class="shutter s-r">' + shutterSvg('r') + '</div>' +
+            '<div class="shutter s-l"></div>' +
+            '<div class="shutter s-r"></div>' +
             '<div class="cover-inner">' +
               '<p class="cover-kicker">S I N G C H</p>' +
-              '<h1 class="cover-title">山 房</h1>' +
+              '<h1 class="cover-title">山\u3000房</h1>' +
             '</div>' +
           '</div>' +
           '<section class="scene" id="scene-hero">' +
             '<div class="hero-core" id="hero-core">' +
-              '<p class="hero-kicker">卷 首</p>' +
+              '<p class="hero-kicker">卷\u3000首</p>' +
               '<h1 class="hero-line">推<span class="accent">窗</span>见山</h1>' +
               '<svg class="mtn" viewBox="0 0 260 100" aria-hidden="true">' +
                 '<path d="M18 88 L86 34 L112 58 L142 20 L204 88"/>' +

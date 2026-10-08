@@ -99,7 +99,20 @@
     { name: '秋', en: 'AUTUMN', v: '#c96f3b', bright: '#d9925e' }
   ];
 
-  /* 窗：两张纯白扇面（CSS 渲染），开合轴心在外侧，从中间往两边推开 */
+  /* 窗：两张纯白扇面 + 黑色线条（变体二改：细主框 + 四角贴边角块，去掉最内框）
+     viewBox 100x200 随面板拉伸，non-scaling-stroke 保证线条粗细不变形 */
+  function shutterLines() {
+    return '' +
+      '<svg class="shutter-lines" viewBox="0 0 100 200" preserveAspectRatio="none" aria-hidden="true">' +
+        /* 主内框（细线，离边约 13%） */
+        '<rect x="13" y="13" width="74" height="174" fill="none" stroke="#111" stroke-width="1.5" vector-effect="non-scaling-stroke"/>' +
+        /* 四角角块（26x26 贴边，贴合面板的两条边去掉，剩 L 形，与主框线交叉） */
+        '<path d="M0 26H26V0" fill="none" stroke="#111" stroke-width="2.5" vector-effect="non-scaling-stroke"/>' +
+        '<path d="M74 0V26H100" fill="none" stroke="#111" stroke-width="2.5" vector-effect="non-scaling-stroke"/>' +
+        '<path d="M0 174H26V200" fill="none" stroke="#111" stroke-width="2.5" vector-effect="non-scaling-stroke"/>' +
+        '<path d="M100 174H74V200" fill="none" stroke="#111" stroke-width="2.5" vector-effect="non-scaling-stroke"/>' +
+      '</svg>';
+  }
 
   function homePage() {
     return '' +
@@ -107,8 +120,8 @@
       '<div class="book">' +
         '<div class="book-sticky">' +
           '<div class="cover" id="cover">' +
-            '<div class="shutter s-l"></div>' +
-            '<div class="shutter s-r"></div>' +
+            '<div class="shutter s-l">' + shutterLines() + '</div>' +
+            '<div class="shutter s-r">' + shutterLines() + '</div>' +
             '<div class="cover-inner">' +
               '<p class="cover-kicker">S I N G C H</p>' +
               '<h1 class="cover-title">山\u3000房</h1>' +

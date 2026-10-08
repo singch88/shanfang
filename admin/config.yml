@@ -1,0 +1,39 @@
+# ============================================================
+# 山房 · Decap CMS 配置
+# 后台地址: https://<你的域名>/admin/
+# 登录: 点 "Login with GitHub"
+# 数据: 单一文件 site/data/posts.json（数组）
+# ============================================================
+
+backend:
+  name: github
+  repo: singch88/shanfang
+  branch: main
+
+# 媒体库：图片存到 site/assets/img/
+media_folder: "site/assets/img"
+public_folder: "/shanfang/assets/img"
+
+# 文章集合（单文件模式）
+collections:
+  - name: "posts"
+    label: "文字"
+    label_singular: "文章"
+    description: "只进不出的陈列柜：每条都是一片叶子，不是流水"
+    file: "site/data/posts.json"
+    format: "json"
+    summary: "{{title}} · {{date}}"
+    sortable_fields: ["date", "title"]
+    fields:
+      - label: "文章列表"
+        name: "posts"
+        widget: "list"
+        summary: "{{fields.title}} · {{fields.date}}"
+        fields:
+          - { label: "路由 ID", name: "id", widget: "string", hint: "URL 用，唯一。例: 06" }
+          - { label: "发布日期", name: "date", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false, picker_utc: false, format: "YYYY-MM-DD" }
+          - { label: "标题", name: "title", widget: "string" }
+          - { label: "标签", name: "tags", widget: "list", required: false, hint: "回车加一个" }
+          - { label: "摘要", name: "excerpt", widget: "text", required: false }
+          - { label: "素材出处", name: "sources", widget: "text", required: false, hint: "引用了哪些笔记/时间" }
+          - { label: "正文 HTML", name: "html", widget: "text", hint: "直接写 HTML：<h2> <p> <blockquote> <strong> <br> 等" }

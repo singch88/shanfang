@@ -5,7 +5,26 @@
   'use strict';
 
   var app = document.getElementById('app');
-  var POSTS = window.POSTS || [];
+  var POSTS = [];
+  var postsReady = false;
+
+  /* 加载文章：先尝试拉 data/posts.json（Decap CMS 写入），失败用 window.POSTS 兜底 */
+  function loadPosts(cb) {
+    if (postsReady) { cb(); return; }
+    fetch('data/posts.json', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        if (Array.isArray(d) && d.length) { POSTS = d; }
+        else { POSTS = window.POSTS || []; }
+        postsReady = true;
+        cb();
+      })
+      .catch(function () {
+        POSTS = window.POSTS || [];
+        postsReady = true;
+        cb();
+      });
+  }
 
   /* ================= 汉堡菜单 ================= */
 
@@ -33,6 +52,7 @@
     function apply(i, silent) {
       var c = SEASONS[i];
       document.documentElement.style.setProperty('--accent', c.v);
+      document.documentElement.style.setProperty('--accent-bright', c.bright);
       btn.setAttribute('data-si', String(i));
       seasonIdx = i;
       if (canvas) buildParticles();
@@ -73,12 +93,13 @@
     { title: '生活混剪', tag: '手感最熟', desc: '碎片混剪。想往电影感走，还在找形状。', pf: 'B 站', url: BSPACE }
   ];
 
-  /* 四季轮：冬（雪）→ 春（芽）→ 夏（叶）→ 秋（果）→ 回冬 */
+  /* 四季轮：冬（雪）→ 春（蒲公英）→ 夏（萤火）→ 秋（落叶）→ 回冬 */
+  /* v = 主题色（白底/深底都用），bright = 强版（深色菜单/特殊场景用） */
   var SEASONS = [
-    { name: '冬', en: 'WINTER', v: '#1a1a1a' },
-    { name: '春', en: 'SPRING', v: '#9cb069' },
-    { name: '夏', en: 'SUMMER', v: '#3f7f6e' },
-    { name: '秋', en: 'AUTUMN', v: '#c96f3b' }
+    { name: '冬', en: 'WINTER', v: '#1a1a1a', bright: '#f2efe6' },
+    { name: '春', en: 'SPRING', v: '#9cb069', bright: '#b8d18a' },
+    { name: '夏', en: 'SUMMER', v: '#d8c66a', bright: '#f0d980' },
+    { name: '秋', en: 'AUTUMN', v: '#c96f3b', bright: '#d9925e' }
   ];
 
   function homePage() {
@@ -239,13 +260,13 @@
 
   function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
 
-  /* 四季粒子：冬雪 / 春絮(蒲公英种) / 夏萤(黄) / 秋叶 */
+  /* 四季粒子：冬雪 / 春蒲公英种 / 夏萤火 / 秋叶 */
 
   var SEASON_FX = {
-    0: { shape: 'snow', colors: ['#a9b7c4', '#c3ccd4'], n: 60, a: 0.55 },
-    1: { shape: 'dot', colors: ['#b5c690', '#a8c082'], n: 55, a: 0.55 },
-    2: { shape: 'glow', colors: ['#d8c66a', '#c9b86a'], n: 50, a: 0.7 },
-    3: { shape: 'leaf', colors: ['#c96f3b', '#c9a86a', '#b0413e'], n: 30, a: 0.7 }
+    0: { shape: 'snow',     colors: ['#a9b7c4', '#c3ccd4'], n: 60, a: 0.55 },
+    1: { shape: 'dandelion',colors: ['#b5c690', '#a8c082'], n: 42, a: 0.7  },
+    2: { shape: 'glow',     colors: ['#f0d980', '#d8c66a'], n: 50, a: 0.85 },
+    3: { shape: 'leaf',     colors: ['#c96f3b', '#c9a86a', '#b0413e'], n: 28, a: 0.75 }
   };
 
   function buildParticles() {
@@ -255,8 +276,8 @@
     for (var i = 0; i < n; i++) {
       var r, vy;
       if (fx.shape === 'snow') { r = 1.1 + Math.random() * 1.6; vy = 0.16 + Math.random() * 0.26; }
-      else if (fx.shape === 'dot') { r = 0.8 + Math.random() * 1.2; vy = -0.05 - Math.random() * 0.16; }
-      else if (fx.shape === 'glow') { r = 0.9 + Math.random() * 1.3; vy = (Math.random() - 0.5) * 0.12; }
+      else if (fx.shape === 'dandelion') { r = 1.6 + Math.random() * 1.4; vy = -0.04 - Math.random() * 0.12; }
+      else if (fx.shape === 'glow') { r = 0.9 + Math.random() * 1.3; vy = (Math.random() - 0.5) * 0.1; }
       else { r = 2.4 + Math.random() * 2.2; vy = 0.3 + Math.random() * 0.3; }
       particles.push({
         x: Math.random() * W,
@@ -356,16 +377,51 @@
         ctx.rotate(p.rot + Math.sin(p.sw) * 0.4);
         ctx.globalAlpha = al;
         ctx.fillStyle = p.c;
+        /* 叶子形状：上下尖、中间宽（柳叶/梧桐叶一类） */
         ctx.beginPath();
-        ctx.ellipse(0, 0, p.r, p.r * 0.5, 0, 0, 6.2832);
+        ctx.moveTo(0, -p.r * 1.4);
+        ctx.quadraticCurveTo(p.r * 0.7, -p.r * 0.3, p.r * 0.55, p.r * 0.4);
+        ctx.quadraticCurveTo(p.r * 0.35, p.r * 1.1, 0, p.r * 1.4);
+        ctx.quadraticCurveTo(-p.r * 0.35, p.r * 1.1, -p.r * 0.55, p.r * 0.4);
+        ctx.quadraticCurveTo(-p.r * 0.7, -p.r * 0.3, 0, -p.r * 1.4);
+        ctx.fill();
+        /* 叶脉（淡淡的） */
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.28)';
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(0, -p.r * 1.15);
+        ctx.lineTo(0, p.r * 1.15);
+        ctx.stroke();
+        ctx.restore();
+      } else if (fx.shape === 'dandelion') {
+        /* 蒲公英种：中心点 + 6 根辐射丝 + 慢旋转 */
+        ctx.save();
+        ctx.translate(px, py);
+        ctx.rotate(p.rot);
+        ctx.globalAlpha = al;
+        ctx.strokeStyle = p.c;
+        ctx.fillStyle = p.c;
+        ctx.lineWidth = 0.6;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        for (var a = 0; a < 6; a++) {
+          var ang = a * Math.PI / 3;
+          var cx = Math.cos(ang), sy = Math.sin(ang);
+          ctx.moveTo(cx * p.r * 0.4, sy * p.r * 0.4);
+          ctx.lineTo(cx * p.r * 1.6, sy * p.r * 1.6);
+        }
+        ctx.stroke();
+        /* 中心点 */
+        ctx.beginPath();
+        ctx.arc(0, 0, p.r * 0.45, 0, 6.2832);
         ctx.fill();
         ctx.restore();
       } else {
         if (fx.shape === 'glow') {
-          ctx.globalAlpha = al * 0.16;
+          ctx.globalAlpha = al * 0.18;
           ctx.fillStyle = p.c;
           ctx.beginPath();
-          ctx.arc(px, py, p.r * 3, 0, 6.2832);
+          ctx.arc(px, py, p.r * 3.2, 0, 6.2832);
           ctx.fill();
         }
         ctx.globalAlpha = al;
@@ -431,9 +487,7 @@
 
     window.addEventListener('resize', onResize);
     window.addEventListener('mousemove', function (e) { onMove(e.clientX, e.clientY); });
-    window.addEventListener('touchmove', function (e) {
-      var t = e.touches[0]; if (t) onMove(t.clientX, t.clientY);
-    }, { passive: true });
+    /* 触屏不更新 mouse 位置：手指拖动时粒子不会被推开（避免"乱跳"） */
     window.addEventListener('touchend', onLeave);
     document.addEventListener('mouseleave', onLeave);
 
@@ -478,6 +532,9 @@
   }
 
   initBloom();
-  window.addEventListener('hashchange', router);
-  router();
+  window.addEventListener('hashchange', function () {
+    if (postsReady) router();
+    else loadPosts(router);
+  });
+  loadPosts(router);
 })();

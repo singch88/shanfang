@@ -118,7 +118,7 @@
           '</div>' +
           '<section class="scene" id="scene-hero">' +
             '<div class="hero-core" id="hero-core">' +
-              '<p class="hero-kicker">卷\u3000首</p>' +
+              '<p class="hero-kicker">卷首</p>' +
               '<h1 class="hero-line">推<span class="accent">窗</span>见山</h1>' +
               '<svg class="mtn" viewBox="0 0 260 100" aria-hidden="true">' +
                 '<path d="M18 88 L86 34 L112 58 L142 20 L204 88"/>' +

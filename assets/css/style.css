@@ -2,13 +2,13 @@
 
 :root {
   --bg: #0a0a0a;
-  --ink: #e8e5dc;
-  --grey: #98928a;
-  --dim: #6a665e;
-  --faint: #1c1a18;
+  --ink: #e9e9e9;           /* 中性白（去黄） */
+  --grey: #9a9a9a;
+  --dim: #676767;
+  --faint: #1c1c1c;
   --line: rgba(255, 255, 255, 0.1);
-  --accent: #c9a86a;
-  --accent-bright: #f0d99a;
+  --accent: #d8d8d8;        /* 冬（雪）：银白 */
+  --accent-bright: #f5f5f5;
   --serif: 'Songti SC', 'STSong', 'Noto Serif SC', 'SimSun', serif;
   --sans: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Segoe UI', 'Microsoft YaHei', sans-serif;
 }
@@ -108,11 +108,11 @@ body.menu-open .burger span { background: #f5f5f5; }
   opacity: calc(1 - var(--w) * 2.6);
   pointer-events: none;
 }
-.cover-kicker { font-size: 10px; letter-spacing: 0.6em; text-indent: 0.6em; color: #c9a86a; }
-.cover-title { font-family: var(--serif); font-size: clamp(1.9rem, 8vw, 3.2rem); font-weight: 600; letter-spacing: 0.4em; text-indent: 0.4em; color: #f2efe6; }
+.cover-kicker { font-size: 10px; letter-spacing: 0.6em; text-indent: 0.6em; color: #6b5433; }
+.cover-title { font-family: var(--serif); font-size: clamp(1.9rem, 8vw, 3.2rem); font-weight: 600; letter-spacing: 0.4em; text-indent: 0.4em; color: #2f2416; }
 
 .mtn { width: min(72vw, 340px); margin-top: 4px; }
-.mtn path { fill: none; stroke: #6a665e; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+.mtn path { fill: none; stroke: #6e6e6e; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
 
 .pg-no { position: absolute; top: 24px; right: 22px; font-family: var(--serif); font-size: 10px; letter-spacing: 0.2em; color: rgba(232, 229, 220, 0.24); }
 .hl { color: var(--accent); }
@@ -220,7 +220,7 @@ body.menu-open .burger span { background: #f5f5f5; }
 .article-head hr { border: none; height: 1px; background: var(--line); margin: 26px 0 8px; }
 
 .article h2 { font-family: var(--serif); font-size: 1.2rem; font-weight: 600; letter-spacing: 0.08em; margin: 2.6em 0 0.9em; padding-left: 14px; border-left: 2px solid var(--accent); line-height: 1.6; }
-.article p { line-height: 1.95; margin-bottom: 1.2em; color: #c4bfb4; letter-spacing: 0.02em; }
+.article p { line-height: 1.95; margin-bottom: 1.2em; color: #c9c9c9; letter-spacing: 0.02em; }
 .article strong { color: var(--ink); font-weight: 600; }
 .article blockquote { margin: 1.8em 0; padding: 4px 0 4px 18px; border-left: 1px solid var(--accent); color: var(--ink); font-family: var(--serif); line-height: 1.9; font-size: 0.97rem; }
 .article blockquote p { margin-bottom: 0.6em; color: inherit; }
@@ -229,7 +229,7 @@ body.menu-open .burger span { background: #f5f5f5; }
 
 .v-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 .v-card-p { text-decoration: none; display: block; }
-.v-poster { position: relative; aspect-ratio: 3 / 4; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255, 255, 255, 0.04), transparent 70%), linear-gradient(165deg, #1a1815 0%, #14110e 55%, #0e0c0a 100%); transition: border-color 0.3s; }
+.v-poster { position: relative; aspect-ratio: 3 / 4; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255, 255, 255, 0.05), transparent 70%), linear-gradient(165deg, #1a1a1a 0%, #141414 55%, #0e0e0e 100%); transition: border-color 0.3s; }
 .v-card-p:hover .v-poster { border-color: var(--accent); }
 .v-poster .play { width: 44px; height: 44px; border: 1px solid rgba(255, 255, 255, 0.28); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--ink); padding-left: 3px; transition: transform 0.3s, border-color 0.3s; }
 .v-card-p:hover .play { transform: scale(1.12); border-color: var(--accent); }
@@ -247,7 +247,7 @@ body.menu-open .burger span { background: #f5f5f5; }
 
 .about-block { margin-bottom: 48px; }
 .about-block h2 { font-family: var(--serif); font-size: 1rem; font-weight: 600; letter-spacing: 0.35em; color: var(--grey); margin-bottom: 16px; }
-.about-block p { color: #c4bfb4; line-height: 1.95; margin-bottom: 1.1em; }
+.about-block p { color: #c9c9c9; line-height: 1.95; margin-bottom: 1.1em; }
 .about-block .big { font-family: var(--serif); font-size: 1.3rem; color: var(--ink); line-height: 2; letter-spacing: 0.08em; }
 
 .footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 10px; color: var(--dim); letter-spacing: 0.2em; line-height: 2.4; text-align: center; }

@@ -51,6 +51,7 @@
       var c = SEASONS[i];
       document.documentElement.style.setProperty('--accent', c.v);
       document.documentElement.style.setProperty('--accent-bright', c.bright);
+      document.documentElement.style.setProperty('--snow', String(c.snow));
       btn.setAttribute('data-si', String(i));
       seasonIdx = i;
       if (canvas) buildParticles();
@@ -93,10 +94,10 @@
   /* 四季轮：冬（雪/银白）→ 春（芽/绿）→ 夏（萤/黄）→ 秋（叶/橙）→ 回冬 */
   /* 黑底配色：黑白灰基调，v = 主色（按钮/高亮），bright = 强版（菜单 hover） */
   var SEASONS = [
-    { name: '冬', en: 'WINTER', v: '#d8d8d8', bright: '#f5f5f5' },
-    { name: '春', en: 'SPRING', v: '#9cb069', bright: '#b8d18a' },
-    { name: '夏', en: 'SUMMER', v: '#d8c66a', bright: '#f0d980' },
-    { name: '秋', en: 'AUTUMN', v: '#c96f3b', bright: '#d9925e' }
+    { name: '冬', en: 'WINTER', v: '#d8d8d8', bright: '#f5f5f5', snow: 0.85 },
+    { name: '春', en: 'SPRING', v: '#9cb069', bright: '#b8d18a', snow: 0.40 },
+    { name: '夏', en: 'SUMMER', v: '#d8c66a', bright: '#f0d980', snow: 0    },
+    { name: '秋', en: 'AUTUMN', v: '#c96f3b', bright: '#d9925e', snow: 0.15 }
   ];
 
   /* 窗：两张纯白扇面 + 中间一条渐变缝（颜色随四季主题色切换） */
@@ -122,6 +123,12 @@
               '<svg class="mtn" viewBox="0 0 260 100" aria-hidden="true">' +
                 '<path d="M18 88 L86 34 L112 58 L142 20 L204 88"/>' +
                 '<path d="M138 88 L188 44 L214 66 L248 88" opacity="0.45"/>' +
+                /* 雪线：三峰同一高度（y=48），大波浪底边，随四季融雪（--snow 控制显隐） */
+                '<g class="snow" fill="#d8d8d8" stroke="none" style="opacity: var(--snow, 0.85)">' +
+                  '<path d="M86 34 L68.4 48 Q74 54 79.6 48 Q85 54 90.6 48 Q96 52 101.2 48 Z"/>' +
+                  '<path d="M142 20 L119.9 48 Q127 55 133.6 48 Q141 54 147.6 48 Q155 55 161.6 48 L167.5 48 Z"/>' +
+                  '<path d="M188 44 L183.5 48 Q186.5 51 188.5 48 Q190.5 51 192.7 48 Z" opacity="0.75"/>' +
+                '</g>' +
               '</svg>' +
               '<p class="hero-en">A HOUSE ON THE MOUNTAIN</p>' +
             '</div>' +

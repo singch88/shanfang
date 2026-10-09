@@ -1,4 +1,4 @@
-/* ============ 山房 · 推窗见山 · 夜色版 ============ */
+/* ============ 山房 · 开门见山 · 夜色版 ============ */
 
 :root {
   --bg: #0a0a0a;
@@ -72,10 +72,10 @@ body.menu-open .burger span { background: #f5f5f5; }
 .menu a i { font-style: normal; font-family: var(--sans); font-size: 10px; letter-spacing: 0.25em; color: #4a4a46; }
 .menu-foot { position: absolute; bottom: 26px; left: 9vw; font-size: 10px; letter-spacing: 0.25em; color: #4a4a46; }
 
-/* 书（中式老木窗） */
+/* 书（中式木门） */
 .book { height: 200vh; position: relative; z-index: 1; }
 .book-sticky { position: sticky; top: 0; height: 100vh; height: 100svh; perspective: 1800px; overflow: hidden; }
-/* 整扇窗（含轴面）：接近全开时渐变淡出，全开即彻底消失（不闪、不留残片） */
+/* 整樘门（含门框）：接近全开时渐变淡出，全开即彻底消失（不闪、不留残片） */
 .cover {
   position: absolute; inset: 0; z-index: 100; --w: 0; perspective: 1600px; pointer-events: none;
   opacity: clamp(0, calc((1 - var(--w)) * 4), 1);
@@ -83,19 +83,89 @@ body.menu-open .burger span { background: #f5f5f5; }
 
 .shutter {
   position: absolute; top: 0; bottom: 0; width: 50%;
-  background: #ffffff;
-  backface-visibility: hidden;
   will-change: transform;
+  /* 渲染交给 .door-3d 内部的 6 个面：5 面盒子（front + 4 厚度面，back 不需要因为被前遮）。
+     保留 3D 上下文，子元素的 rotateY/X 才能拼出长方体 */
   transform-style: preserve-3d;
 }
-/* 立体轴面：窗的厚度，绕铰链轴折 90°，面朝观众一侧。
-   关着时几乎不可见（透视投到视口外），推开时从 0 渐宽，全开时是一整条竖直侧面 */
-.edge {
-  position: absolute; top: 0; bottom: 0; width: 18px;
-  background: linear-gradient(to bottom, #dcdad2 0%, #b4b4ac 30%, #cdcdc5 62%, #96968f 100%);
+/* ===== 3D 长方体门扇（门板 = W × H × D 的盒子）=====
+   D = 14px（厚度）
+   旋转轴 = 1 号棱（左前棱，x=0、z=0，即门框左边缘那条竖线；右门镜像在右前棱）。
+   front 面的左侧边就是 1 号棱本身——钉死不动，永远贴门洞最左；
+   4 号棱（背面那条）跟着门板转到屋内，和 1 号棱之间永远隔着 D，不会合并。
+   开门向屋内推 = 门缝侧（2 号棱）向 -z 方向转入。
+   6 个面的摆位（用「transform-origin 设到自己的角 + 一次 rotateX/Y 90°」的成熟套路）：
+     front    z=0  正面白色
+     side-r   x=W, z∈[-D,0]  靠门缝那侧厚度面
+     side-l   x=0, z∈[-D,0]  靠铰链那侧厚度面
+     top      y=0, z∈[-D,0]  顶部厚度面
+     bottom   y=H, z∈[-D,0]  底部厚度面
+     旋转方向全部经过逐面核算（不是凭感觉），所有面都朝 z=-D 翻平 */
+.s-l {
+  left: 0;
+  /* 铰链钉在 1 号棱（左前棱 = 门框左边缘，x=0, z=0）：
+     front 面左侧边（=1 号棱）钉死不动，永远贴在门洞最左；
+     4 号棱（背面）跟着门板转到屋内；2 号棱（门缝侧）向 -z 推 */
+  transform-origin: 0% 50% 0;
+  transform: rotateY(calc(var(--w) * 95deg));
 }
-.e-l { left: 0; transform-origin: left center; transform: rotateY(-90deg); }
-.e-r { right: 0; transform-origin: right center; transform: rotateY(90deg); }
+.s-r {
+  right: 0;
+  /* 镜像：钉在右前棱（门框右边缘，x=100%, z=0）。
+     开门向屋内推用负角（门缝侧棱向 -z 转入） */
+  transform-origin: 100% 50% 0;
+  transform: rotateY(calc(var(--w) * -95deg));
+}
+.door-3d {
+  position: absolute; inset: 0;
+  transform-style: preserve-3d;
+}
+.face {
+  position: absolute;
+  background: #ffffff;
+  /* 不设 backface-visibility：双面可见，避免某些面方向反时被裁掉露出破洞 */
+}
+/* 正面：z=0，占满 */
+.face.front  { left: 0; top: 0; width: 100%; height: 100%; }
+/* 右侧厚度面（靠门缝侧）：x=W, z∈[-D,0]，法线 +x */
+.face.side-r {
+  left: 100%; top: 0; width: 14px; height: 100%;
+  transform-origin: left top;
+  transform: rotateY(90deg);
+  background: linear-gradient(to left, #deded8 0%, #f0f0ea 50%, #ffffff 100%);
+}
+/* 左侧厚度面（贴铰链/4 号棱外侧）：x=0, z∈[-D,0]，法线 -x */
+.face.side-l {
+  left: -14px; top: 0; width: 14px; height: 100%;
+  transform-origin: right top;
+  transform: rotateY(-90deg);
+  background: linear-gradient(to right, #deded8 0%, #f0f0ea 50%, #ffffff 100%);
+}
+/* 顶部厚度面：y=0, z∈[-D,0]，法线 -y（朝上） */
+.face.top {
+  left: 0; top: 0; width: 100%; height: 14px;
+  transform-origin: left top;
+  transform: rotateX(-90deg);
+  background: linear-gradient(to bottom, #deded8 0%, #f0f0ea 60%, #ffffff 100%);
+}
+/* 底部厚度面：y=H, z∈[-D,0]，法线 +y（朝下） */
+.face.bottom {
+  left: 0; top: 100%; width: 100%; height: 14px;
+  transform-origin: left top;
+  transform: rotateX(-90deg);
+  background: linear-gradient(to top, #d8d8d2 0%, #ecece6 60%, #ffffff 100%);
+}
+/* 门框轴面（内侧）：固定在门洞左右口沿、随墙不动，向内后仰 58°，
+   看到的是门洞内侧的斜切面——门嵌在墙里，不是贴在墙外。
+   关门时藏在门扇后面（透明度 0），开门随 --w 渐显 */
+.edge {
+  position: absolute; top: 0; bottom: 0; width: 26px;
+  background: linear-gradient(to bottom, #dcdad2 0%, #b4b4ac 30%, #cdcdc5 62%, #96968f 100%);
+  opacity: clamp(0, calc((var(--w) - 0.08) * 5), 1);
+  pointer-events: none;
+}
+.j-l { left: 0; transform-origin: left center; transform: rotateY(58deg); }
+.j-r { right: 0; transform-origin: right center; transform: rotateY(-58deg); }
 .seam {
   position: absolute; top: 0; bottom: 0; left: 50%;
   width: 2px; margin-left: -1px;
@@ -192,10 +262,10 @@ html[data-snow="autumn"] .snow-a { display: block; }
 .scene-end { min-height: auto; padding: 44px 26px 70px; }
 
 .hero-core { will-change: transform, opacity; }
-.hero-kicker { font-size: 11px; letter-spacing: 0.3em; text-indent: 0.15em; color: var(--accent); animation: boot 1.4s 0.2s ease both; }
+.hero-kicker { font-size: 10px; color: var(--accent); animation: boot 1.4s 0.2s ease both; }
 .hero-line { font-family: var(--serif); font-weight: 600; font-size: clamp(1.5rem, 6vw, 2.5rem); letter-spacing: 0.18em; text-indent: 0.09em; line-height: 2; margin: 26px 0 8px; animation: boot 1.6s 0.55s ease both; }
 .hero-line .accent { color: var(--accent); }
-.hero-en { font-family: var(--serif); font-size: 12px; letter-spacing: 0.22em; text-indent: 0.11em; color: var(--dim); animation: boot 1.6s 0.9s ease both; }
+.hero-en { font-size: 11px; letter-spacing: 0.35em; text-indent: 0.175em; color: var(--dim); animation: boot 1.6s 0.9s ease both; }
 @keyframes boot { from { opacity: 0; transform: translateY(22px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
 
 .stat { display: flex; align-items: baseline; justify-content: flex-start; gap: 16px; margin: 10px 0; }

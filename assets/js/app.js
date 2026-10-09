@@ -110,26 +110,8 @@
           '<div class="cover" id="cover">' +
             '<div class="edge j-l"></div>' +
             '<div class="edge j-r"></div>' +
-            // 左门：3D 长方体（front + side-l + side-r + top + bottom 5 个面）
-            '<div class="shutter s-l">' +
-              '<div class="door-3d">' +
-                '<div class="face front"></div>' +
-                '<div class="face side-l"></div>' +
-                '<div class="face side-r"></div>' +
-                '<div class="face top"></div>' +
-                '<div class="face bottom"></div>' +
-              '</div>' +
-            '</div>' +
-            // 右门：同结构
-            '<div class="shutter s-r">' +
-              '<div class="door-3d">' +
-                '<div class="face front"></div>' +
-                '<div class="face side-l"></div>' +
-                '<div class="face side-r"></div>' +
-                '<div class="face top"></div>' +
-                '<div class="face bottom"></div>' +
-              '</div>' +
-            '</div>' +
+            '<div class="shutter s-l"></div>' +
+            '<div class="shutter s-r"></div>' +
             '<div class="seam"></div>' +
             '<div class="cover-inner">' +
               '<p class="cover-kicker">S I N G C H</p>' +

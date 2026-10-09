@@ -1,4 +1,4 @@
-/* ============ 山房 · 推窗见山 · 路由 + 滚动叙事 ============ */
+/* ============ 山房 · 开门见山 · 路由 + 滚动叙事 ============ */
 /* 零依赖：file:// 双击可开；粒子/视差/计数均为原生实现 */
 
 (function () {
@@ -100,7 +100,7 @@
     { name: '秋', en: 'AUTUMN', v: '#c96f3b', bright: '#d9925e', snow: 'autumn' }
   ];
 
-  /* 窗：两张纯白扇面 + 中间一条渐变缝（颜色随四季主题色切换） */
+  /* 门：两张纯白门扇 + 中间一条渐变缝（颜色随四季主题色切换） */
 
   function homePage() {
     return '' +
@@ -108,18 +108,38 @@
       '<div class="book">' +
         '<div class="book-sticky">' +
           '<div class="cover" id="cover">' +
-            '<div class="shutter s-l"><div class="edge e-l"></div></div>' +
-            '<div class="shutter s-r"><div class="edge e-r"></div></div>' +
+            '<div class="edge j-l"></div>' +
+            '<div class="edge j-r"></div>' +
+            // 左门：3D 长方体（front + side-l + side-r + top + bottom 5 个面）
+            '<div class="shutter s-l">' +
+              '<div class="door-3d">' +
+                '<div class="face front"></div>' +
+                '<div class="face side-l"></div>' +
+                '<div class="face side-r"></div>' +
+                '<div class="face top"></div>' +
+                '<div class="face bottom"></div>' +
+              '</div>' +
+            '</div>' +
+            // 右门：同结构
+            '<div class="shutter s-r">' +
+              '<div class="door-3d">' +
+                '<div class="face front"></div>' +
+                '<div class="face side-l"></div>' +
+                '<div class="face side-r"></div>' +
+                '<div class="face top"></div>' +
+                '<div class="face bottom"></div>' +
+              '</div>' +
+            '</div>' +
             '<div class="seam"></div>' +
             '<div class="cover-inner">' +
               '<p class="cover-kicker">S I N G C H</p>' +
-              '<h1 class="cover-title">山房</h1>' +
+              '<h1 class="cover-title">山\u3000房</h1>' +
             '</div>' +
           '</div>' +
           '<section class="scene" id="scene-hero">' +
             '<div class="hero-core" id="hero-core">' +
-              '<p class="hero-kicker">卷首</p>' +
-              '<h1 class="hero-line">推<span class="accent">窗</span>见山</h1>' +
+              '<p class="hero-kicker">卷\u3000首</p>' +
+              '<h1 class="hero-line">开<span class="accent">门</span>见山</h1>' +
               '<svg class="mtn" viewBox="0 0 260 100" aria-hidden="true">' +
                 '<path d="M18 88 L86 34 L112 58 L142 20 L204 88"/>' +
                 '<path d="M138 88 L188 44 L214 66 L248 88" opacity="0.45"/>' +
@@ -138,7 +158,7 @@
                   '</g>' +
                 '</g>' +
               '</svg>' +
-              '<p class="hero-en">光与影之际，只有影子知道边界在哪里</p>' +
+              '<p class="hero-en">THE MOUNTAIN IS ALWAYS THERE</p>' +
             '</div>' +
           '</section>' +
         '</div>' +

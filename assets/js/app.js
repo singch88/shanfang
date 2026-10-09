@@ -108,8 +108,6 @@
       '<div class="book">' +
         '<div class="book-sticky">' +
           '<div class="cover" id="cover">' +
-            '<div class="edge j-l"></div>' +
-            '<div class="edge j-r"></div>' +
             '<div class="shutter s-l"></div>' +
             '<div class="shutter s-r"></div>' +
             '<div class="seam"></div>' +
